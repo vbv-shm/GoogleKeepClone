@@ -10,8 +10,11 @@ class App{
         this.$notes=document.querySelector("#notes");
         this.$formButtons=document.querySelector("#form-buttons");
         this.$placeholder=document.querySelector("#placeholder");
+        this.$formCloseButton=document.querySelector("#form-close-button");
+
         // When we start our app we attach all event listeners defined inside addEventListeners method.
         this.addEventListeners();
+        
     }
 
     // Event listeners for whole the whole app.
@@ -30,10 +33,14 @@ class App{
             const text=this.$noteText.value;
             const hasNote = title || text;
             if (hasNote) {
-         
                 this.addNote({ title, text });
-      }
-        })
+                        }
+                                                })
+        this.$formCloseButton.addEventListener("click",(event)=>{
+            // stop propagation stops bubbling of events. All the event listener below our close won't run. We have event listener which opens form when we click anywhere on form. That event listener will run after this event listener which will again open the form. stopPropagation stops that event listener from running.
+            event.stopPropagation();
+            this.closeForm();
+             })
 
     };
     // Event is passed to callback function. Here mouse click event on body is passed as object to handleFormClick.   
@@ -41,7 +48,7 @@ class App{
         
         // HTMLelement object has a "contains" method which take another HTMLelement object as argument and returns true if the other element is child of first element.
         
-        // event.target is the HTMLelement object which is clicked. If this object is child of the $form HTMLelement, the contains method will return true otherwise false.
+        // event.target is the HTMLelement object which is clicked. If this object is child of the $form HTMLelement, the contains method will return true otherwise false. In simpler words if the user clicked inside the form only then the form will open.
         const isFromClicked=this.$form.contains(event.target);
 
         if(isFromClicked){
@@ -78,7 +85,7 @@ class App{
             this.displayNotes();
             this.closeForm();
         }
-        // addNote adds note to list object and displaynote displays the objects onto screen.
+        // addNote adds note to list object and displayNotes displays the objects onto screen.
     displayNotes(){
         //show the placeholder only if the number of notes are 0.
         const hasNotes=this.notes.length>0;
