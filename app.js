@@ -20,6 +20,8 @@ class App{
         this.$modalTitle = document.querySelector(".modal-title");
         this.$modalText = document.querySelector(".modal-text");
         this.$modalCloseButton = document.querySelector('.modal-close-button');
+        this.$colorTooltip=document.querySelector("#color-tooltip");
+
         // When we start our app we attach all event listeners defined inside addEventListeners method.
         this.addEventListeners();
         
@@ -54,6 +56,9 @@ class App{
         
         this.$modalCloseButton.addEventListener("click",event=>{
             this.closeModal(event);
+        })
+        document.body.addEventListener('mouseover',event=>{
+            openToolTip(event);
         })
 
     };
@@ -102,6 +107,7 @@ class App{
         }
     }
     closeModal(event){
+        // closeModal runs when we click close button on modal.
         this.editNote();
         // After editing the note we close the modal by toggling its class.
         this.$modal.classList.toggle('open-modal');
@@ -153,15 +159,30 @@ class App{
                 <div class="${note.title && 'note-title'}">${note.title}</div>
                 <div class="note-text">${note.text}</div>
                 <div class="toolbar-container>
-                <img class="toolbar-color" src="https://icon.now.sh/palette">
+                <img class="toolbar-color" src="color-picker.png">
                 <img class="toolbar-delete" src="https://icon.now.sh/delete">
               </div>
             </div>
           </div>
        `).join("");         
+    }
+    
+    openToolTip(event){
+        // The "matches" method of HTML elements returns true if the element exactly matches the class provided in input.
+        if(!event.target.matches(".toolbar-color")){return;}    
+        
+        //getBoundingCLientRect gives the coordinate of the element.
+        const noteCoords=event.target.getBoundingCLientRect();
+        
+
+        const horizontal = noteCoords.left + window.scrollX;
+        const vertical = noteCoords.top + window.scrollY;
+
+        this.$colorTooltip.style.transform=`translate(${horizontal}px, ${vertical}px)`;
+        this.$colorTooltip.style.display = 'flex';
 
     }
 }
-
+    
 
 new App()
