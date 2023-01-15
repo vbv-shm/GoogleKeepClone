@@ -58,8 +58,24 @@ class App{
             this.closeModal(event);
         })
         document.body.addEventListener('mouseover',event=>{
-            openToolTip(event);
+            this.openToolTip(event);
         })
+        document.body.addEventListener('mouseout',event=>{
+            this.closeToolTip(event);
+        })
+        this.$colorTooltip.addEventListener("mouseover",function(){
+            this.style.display="flex";
+        })
+        this.$colorTooltip.addEventListener("mouseout",function(){
+            this.style.display="none";
+        })
+        this.$colorTooltip.addEventListener("click",event=>{
+            const color=event.target.dataset.color;
+            if (color){
+                this.editNoteColor(color);
+            }
+        }
+        )
 
     };
     // Event is passed to callback function. Here mouse click event on body is passed as object to handleFormClick.   
@@ -158,29 +174,35 @@ class App{
             <div style="background:${note.color};"class="note" data-id="${note.id}">
                 <div class="${note.title && 'note-title'}">${note.title}</div>
                 <div class="note-text">${note.text}</div>
-                <div class="toolbar-container>
-                <img class="toolbar-color" src="color-picker.png">
-                <img class="toolbar-delete" src="https://icon.now.sh/delete">
-              </div>
+                <div class="toolbar-container">
+                    <img class="toolbar-color" data-id=${note.id} src="colorpicker.png">
+                    <img class="toolbar-delete" src="delete.png">
+                </div>
             </div>
-          </div>
        `).join("");         
     }
-    
+    editNoteColor(color){
+        this.notes =this.notes.map(note=>
+            note.id===Number(this.id)?{...note,color}:note);
+            this.displayNotes();
+    }
     openToolTip(event){
         // The "matches" method of HTML elements returns true if the element exactly matches the class provided in input.
         if(!event.target.matches(".toolbar-color")){return;}    
-        
+        this.id=event.target.dataset.id;
         //getBoundingCLientRect gives the coordinate of the element.
-        const noteCoords=event.target.getBoundingCLientRect();
-        
+        const noteCoords=event.target.getBoundingClientRect();
+
 
         const horizontal = noteCoords.left + window.scrollX;
         const vertical = noteCoords.top + window.scrollY;
 
         this.$colorTooltip.style.transform=`translate(${horizontal}px, ${vertical}px)`;
         this.$colorTooltip.style.display = 'flex';
-
+    }
+    closeToolTip(event){
+        if(!event.target.matches(".toolbar-color")) return;
+        this.$colorTooltip.style.display="none";
     }
 }
     
